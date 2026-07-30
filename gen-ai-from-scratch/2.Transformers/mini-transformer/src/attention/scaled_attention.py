@@ -110,6 +110,6 @@ QT3      0.4   0.7   1.8
         attention_weights = self.softmax(scaled_attention_scores)
         # Step 5 : Get Contextual Embeddings
         # Attention = Softmax ( Q.KT / sqrt(dk)). V
-        final_attention_scores = self.compute_context(attention_weights,v)
-        return final_attention_scores
+        context_aware_embeddings = self.compute_context(attention_weights,v)
+        return context_aware_embeddings
 

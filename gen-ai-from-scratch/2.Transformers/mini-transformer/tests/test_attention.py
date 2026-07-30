@@ -59,3 +59,10 @@ def test_scaled_attention_score_reduce_values():
     attention_scores = sa.attention_scores(q, k)
     scaled_scores = sa.scaled_attention_scores(attention_scores,embedding_dim=embeddings.shape[1])
     assert np.max(attention_scores) > np.max(scaled_scores)
+
+def test_prob_equal_to_one():
+    scores = np.random.randn(5,5)
+    sa = ScaledAttention(embedding_dim=scores.shape[1])
+    scores = sa.softmax(scores)
+    rows_sum = np.sum(scores,axis=1)
+    assert np.allclose(rows_sum,1)
