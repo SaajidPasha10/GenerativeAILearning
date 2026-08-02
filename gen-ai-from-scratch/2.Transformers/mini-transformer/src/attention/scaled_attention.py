@@ -113,3 +113,56 @@ QT3      0.4   0.7   1.8
         context_aware_embeddings = self.compute_context(attention_weights,v)
         return context_aware_embeddings
 
+    """
+    Applied before softmax so that softmax predicts 0 for masked words
+    meaning it cannot give probability values to words it has not seen
+    For models like GPT they dont see the future words
+    The cat sat on mat. 
+    | Input          | Target |
+    | -------------- | ------ |
+    | The            | Cat    |
+    | The Cat        | Sat    |
+    | The Cat Sat    | On     |
+    | The Cat Sat On | Mat    |
+
+                The  Cat  Sat  On  Mat
+
+    The          ✓    ✗    ✗    ✗    ✗
+    
+    Cat          ✓    ✓    ✗    ✗    ✗
+    
+    Sat          ✓    ✓    ✓    ✗    ✗
+    
+    On           ✓    ✓    ✓    ✓    ✗
+    
+    Mat          ✓    ✓    ✓    ✓    ✓
+The cannot see future words.
+Cat cannot see Sat, On, Mat.
+Sat cannot see On or Mat.
+On cannot see Mat.
+Mat is the last word, so it can see everything before it.
+
+This triangular structure is called the causal mask.
+Predictions should be based on past words only
+    """
+    @staticmethod
+    def casual_mask(raw_scores):
+        """
+           attention_scores shape:
+           (sequence_length, sequence_length)
+           """
+        """
+        [[1 1 1 1],[1 1 1 1],[1 1 1 1],[1 1 1 1]]
+        np.triu(masked,k=1) -> [[0 1 1 1],[0 0 1 1],[0 0 0 1],[0 0 0 0]]
+        -infinity where values are 1
+        [[0 -∞ -∞ -∞ ],[0 0 -∞ -∞ ],[0 0 0 -∞],[0 0 0 0]]
+        Add attention scores to it
+        [[0 -∞ -∞ -∞ ],[0 0 -∞ -∞ ],[0 0 0 -∞],[0 0 0 0]] + [[1 2 3 4 ],....]
+        [[1 -∞ -∞ -∞]...]] -∞ + number = -∞
+        """
+        seq_len  = raw_scores.shape[0]
+        masked = np.ones((seq_len,seq_len))
+        masked = np.triu(masked,k=1)
+        masked = np.where(masked == 1, -np.inf,0)
+        return raw_scores + masked
+

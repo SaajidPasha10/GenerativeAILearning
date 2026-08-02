@@ -66,3 +66,16 @@ def test_prob_equal_to_one():
     scores = sa.softmax(scores)
     rows_sum = np.sum(scores,axis=1)
     assert np.allclose(rows_sum,1)
+
+
+def test_casual_mask():
+    scores = np.zeros((4,4))
+    masked_scores = ScaledAttention.casual_mask(scores)
+    min_inf = -np.inf
+    expected = [
+        [0,min_inf,min_inf,min_inf],
+        [0, 0, min_inf, min_inf],
+        [0, 0, 0, min_inf],
+        [0, 0, 0, 0],
+    ]
+    assert np.array_equal(expected,masked_scores)
