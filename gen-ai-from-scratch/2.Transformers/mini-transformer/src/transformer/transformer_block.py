@@ -3,7 +3,33 @@ from ..attention.multi_head_attention import MultiHeadAttention
 from ..residual.residual import Residual
 from ..layer_norm.layer_nor import LayerNormalization
 from ..feed_forward.feed_forward import FeedForward
-
+"""
+Input Text
+     │
+Tokenizer
+     │
+Embeddings
+     │
+Positional Encoding
+     │
+┌─────────────────────────────┐
+│ Transformer Block × N        │
+│                             │
+│ Multi-Head Attention        │
+│     ↓                       │
+│ Causal Mask                 │
+│     ↓                       │
+│ Residual                    │
+│     ↓                       │
+│ LayerNorm                   │
+│     ↓                       │
+│ Feed Forward                │
+│     ↓                       │
+│ Residual                    │
+│     ↓                       │
+│ LayerNorm                   │
+└─────────────────────────────┘
+"""
 class TransformerBlock:
     def __init__(self,embedding_dim, num_heads, hidden_dim):
         self.mh = MultiHeadAttention(embedding_dim=embedding_dim,num_heads=num_heads)

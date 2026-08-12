@@ -105,9 +105,11 @@ QT3      0.4   0.7   1.8
         #Step 3: Scale the attention. Q.K(Transpose) / sqrt(dk)
         # dk is the dimension of the K vector
         scaled_attention_scores = self.scaled_attention_scores(attention_scores,embedding_dim=embeddings.shape[1])
+        # Step 3.1 : Apply casual mask to hide next words of the current word
+        masked_scores = self.casual_mask(scaled_attention_scores)
         # Step 4 : Apply Softmax on the scaled score
         # Softmax ( Q.KT / sqrt(dk))
-        attention_weights = self.softmax(scaled_attention_scores)
+        attention_weights = self.softmax(masked_scores)
         # Step 5 : Get Contextual Embeddings
         # Attention = Softmax ( Q.KT / sqrt(dk)). V
         context_aware_embeddings = self.compute_context(attention_weights,v)
