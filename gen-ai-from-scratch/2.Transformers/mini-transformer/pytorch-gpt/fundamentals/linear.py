@@ -5,6 +5,9 @@ import torch.nn as nn
 
 """
 Create a linear model with x. y=Wx + b
+nn.Linear(3,4) produces W -> [4,3] and b -> [3]
+given x = [1,2,3] 
+y = x.W^T + b -> Matrix mul -> [1,3] * [3,4] = [1,4] + [4] = [1,4] 
 """
 class LinearModel(nn.Module):
 

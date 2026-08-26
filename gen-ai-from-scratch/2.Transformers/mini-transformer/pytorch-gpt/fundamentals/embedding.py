@@ -31,3 +31,23 @@ print(f"Vector shape {vectors.shape}")
 
 print(embedding.weight.requires_grad) # True
 print(type(embedding.weight)) #torch.nn.parameter.Parameter
+
+"""
+Embedding(5, 4)
+Shape torch.Size([5, 4])
+Token ids 
+ tensor([[1, 2, 3],
+        [2, 3, 4]])
+Embeddings 
+ tensor([[[-0.7560,  2.1394, -0.7317,  0.1840],
+         [-0.1588,  1.3942, -1.1920, -2.4950],
+         [-1.1470, -0.7126, -0.1837, -0.9069]],
+
+        [[-0.1588,  1.3942, -1.1920, -2.4950],
+         [-1.1470, -0.7126, -0.1837, -0.9069],
+         [-0.7363,  0.7585,  2.2258,  0.8307]]], grad_fn=<EmbeddingBackward0>)
+Vector shape torch.Size([2, 3, 4])
+True
+<class 'torch.nn.parameter.Parameter'>
+
+"""
