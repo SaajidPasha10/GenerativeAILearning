@@ -3,6 +3,30 @@ import torch
 import torch.nn as nn
 import math
 """
+Goal of MHA is to create Context Aware tokens.
+Each token after mha will have a representation that is 
+aware of other tokens. 
+Ex: 
+After attention:
+
+"it"
+   ↓
+[representation of "it"
+ + information about animal
+ + information about tired
+ + information from surrounding context]
+ 
+ It produces one contextualized vector per token.
+ Input:
+Token1 → Token2 → Token3 → ... → Token8
+  ↓        ↓        ↓             ↓
+ MHA      MHA      MHA           MHA
+  ↓        ↓        ↓             ↓
+Vec1     Vec2     Vec3    ...    Vec8
+
+        MHA OUTPUT
+        (8 × embedding_dim)
+        
                   Input X
                      │
           ┌──────────┼──────────┐
