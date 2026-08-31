@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 from ..fundamentals.transformer_block import TransformerBlock
-
 class TinyGPT(nn.Module):
     def __init__(self,
                  embedding_dim,
@@ -52,6 +51,30 @@ class TinyGPT(nn.Module):
         logits = self.lm(x)
         return logits
 
+    @torch.no_grad()
+    def generate(self, token_ids, max_new_tokens):
+
+        for _ in range(max_new_tokens):
+            # Forward pass
+            logits = self(token_ids)
+
+            # Only care about the last position
+            next_token_logits = logits[:, -1, :]
+
+            # Greedy decoding
+            next_token = torch.argmax(
+                next_token_logits,
+                dim=-1,
+                keepdim=True
+            )
+
+            # Append next token
+            token_ids = torch.cat(
+                [token_ids, next_token],
+                dim=1
+            )
+
+        return token_ids
 model = TinyGPT(
     vocab_size=10,
     embedding_dim=8,

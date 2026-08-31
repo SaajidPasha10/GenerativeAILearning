@@ -10,8 +10,8 @@ its embedding values have a mean of 0 and a standard deviation of
 """
 import torch
 import torch.nn as nn
-from feed_forward import FeedForward
-from mha import MultiHeadAttention
+from .feed_forward import FeedForward
+from .mha import MultiHeadAttention
 
 class TransformerBlock(nn.Module):
     def __init__(self,embedding_dim,hidden_dim, num_heads):
@@ -22,14 +22,15 @@ class TransformerBlock(nn.Module):
         # Initialize the LN object
         self.norm1 = nn.LayerNorm(embedding_dim,embedding_dim)
         self.norm2 = nn.LayerNorm(embedding_dim,embedding_dim)
+        self.feed_forward = FeedForward(self.embedding_dim,self.hidden_dim)
 
     def forward(self,x):
         mha = MultiHeadAttention(self.num_heads,self.embedding_dim)
         attention_output = mha(x)
-        x = self.norm1(x + attention_output)
-        ffn = FeedForward(self.embedding_dim,self.hidden_dim)
-        ffn_output = ffn.network(x)
-        x = self.norm2(x+ffn_output)
+        # Pre LN Attention
+        x = x + self.norm1(x + attention_output)
+        # Pre LN Feed Forward
+        x = x + self.feed_forward(self.norm2(x))
         return x
 
 block = TransformerBlock(embedding_dim=8,
