@@ -23,10 +23,10 @@ class TransformerBlock(nn.Module):
         self.norm1 = nn.LayerNorm(embedding_dim,embedding_dim)
         self.norm2 = nn.LayerNorm(embedding_dim,embedding_dim)
         self.feed_forward = FeedForward(self.embedding_dim,self.hidden_dim)
-
+        self.mha = MultiHeadAttention(self.num_heads,self.embedding_dim)
     def forward(self,x):
-        mha = MultiHeadAttention(self.num_heads,self.embedding_dim)
-        attention_output = mha(x)
+
+        attention_output = self.mha(x)
         # Pre LN Attention
         x = x + self.norm1(x + attention_output)
         # Pre LN Feed Forward

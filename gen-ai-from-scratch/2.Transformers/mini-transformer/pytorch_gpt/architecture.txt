@@ -1,0 +1,83 @@
+                         ┌─────────────────────┐
+                         │      Input Text     │
+                         │    "i love ai"      │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │      Tokenizer      │
+                         │  Text → Token IDs   │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │     Token IDs       │
+                         │    [1, 2, 3]        │
+                         └──────────┬──────────┘
+                                    │
+                     ┌──────────────┴──────────────┐
+                     │                             │
+                     ▼                             ▼
+             Token Embedding              Position Embedding
+                     │                             │
+                     └──────────────┬──────────────┘
+                                    │
+                                    ▼
+                              Element-wise +
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │ Transformer Block   │
+                         │                     │
+                         │  LayerNorm          │
+                         │      ↓              │
+                         │  Causal MHA         │
+                         │      ↓              │
+                         │  Residual +         │
+                         │      ↓              │
+                         │  LayerNorm          │
+                         │      ↓              │
+                         │  Feed Forward       │
+                         │      ↓              │
+                         │  Residual +         │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                              × N Blocks
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │    Final LayerNorm  │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │       LM Head       │
+                         │ Linear(D → Vocab)   │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                         ┌─────────────────────┐
+                         │       Logits        │
+                         │   [B, S, V]         │
+                         └──────────┬──────────┘
+                                    │
+                         ┌──────────┴──────────┐
+                         │                     │
+                    Training               Inference
+                         │                     │
+                         ▼                     ▼
+                  Cross Entropy          Last Position
+                         │                     │
+                         ▼                     ▼
+                    Loss                 Sampling
+                         │              Greedy/Top-K/
+                         ▼               Top-P/Temp
+                    Backward                  │
+                         │                     ▼
+                         ▼                  Next Token
+                     AdamW                    │
+                         │                     │
+                         └───────┐      ┌──────┘
+                                 ▼      │
+                              Repeat ───┘

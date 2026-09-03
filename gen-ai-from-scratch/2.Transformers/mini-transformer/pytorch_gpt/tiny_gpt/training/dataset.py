@@ -13,6 +13,9 @@ class GPTDataset(Dataset):
     def __getitem__(self, index):
         x = self.token_ids[index : index+self.block_size]
         y = self.token_ids[index + 1 : index+self.block_size + 1]
+        x = torch.tensor(x,dtype=torch.long)
+        y = torch.tensor(y,dtype=torch.long)
+
         return x,y
 
 token_ids = [
